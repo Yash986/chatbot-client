@@ -1,4 +1,4 @@
-const serverBase = "<https://chatbot-backend-production-a9a3.up.railway.app/>";
+const serverBase = "https://chatbot-backend-production-a9a3.up.railway.app";
 const serverURL = `${serverBase}/chat`;
 
 function sendMessage() {
