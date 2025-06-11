@@ -68,3 +68,12 @@ document.getElementById("user-input").addEventListener("keypress", function (e) 
     sendMessage();
   }
 });
+const input = document.getElementById("user-input");
+
+window.addEventListener("load", () => {
+  input.focus();
+});
+
+document.addEventListener("click", () => {
+  input.focus();
+});
