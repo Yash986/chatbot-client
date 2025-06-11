@@ -44,3 +44,9 @@ function updateExpression(mood) {
   };
   faceImg.src = moods[mood] || moods.neutral;
 }
+document.getElementById("user-input").addEventListener("keypress", function (e) {
+  if (e.key === "Enter") {
+    e.preventDefault(); // prevent newline if it's a <textarea>
+    sendMessage();      // call your existing send function
+  }
+});
