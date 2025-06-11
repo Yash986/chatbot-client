@@ -15,11 +15,11 @@ function sendMessage() {
   })
     .then(res => res.json())
     .then(data => {
-      addMessage("Bot", data.reply);
+      addMessage("Babble", data.reply);
       updateExpression(data.mood);
     })
     .catch(() => {
-      addMessage("Bot", "Sorry, I couldn’t reach my brain right now 😞");
+      addMessage("Babble", "Sorry, I couldn’t reach my brain right now 😞");
     });
 
   input.value = "";
