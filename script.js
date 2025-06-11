@@ -38,6 +38,7 @@ function addMessage(sender, text) {
 
 function updateExpression(mood) {
   const faceImg = document.getElementById("bot-face-img");
+  console.log("Changing face to mood:", mood);
   if (!faceImg) return;
 
   const moods = {
@@ -49,7 +50,14 @@ function updateExpression(mood) {
   };
 
   // If mood is not recognized, fall back to neutral
-  faceImg.src = moods[mood] || moods.neutral;
+  const imagePath = moods[mood] || moods.neutral;
+
+  if (faceImg) {
+    faceImg.src = imagePath;
+    console.log("Set image to:", imagePath); // ✅ debug
+  } else {
+    console.error("bot-face-img element not found!");
+  }
 }
 
 document.getElementById("user-input").addEventListener("keypress", function (e) {
