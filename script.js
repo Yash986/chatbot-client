@@ -42,11 +42,13 @@ function updateExpression(mood) {
   if (!faceImg) return;
 
   const moods = {
-    happy: "avatars/happy.png",
-    sad: "avatars/sad.png",
-    angry: "avatars/angry.png",
-    confused: "avatars/confused.png",
-    neutral: "avatars/neutral.png",
+  joy: "avatars/happy.png",
+  sadness: "avatars/sad.png",
+  anger: "avatars/angry.png",
+  fear: "avatars/confused.png",
+  surprise: "avatars/confused.png",
+  disgust: "avatars/angry.png",
+  neutral: "avatars/neutral.png",
   };
 
   // If mood is not recognized, fall back to neutral
