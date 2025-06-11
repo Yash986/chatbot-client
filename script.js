@@ -16,10 +16,13 @@ function sendMessage() {
     .then(res => res.json())
     .then(data => {
       addMessage("Babble", data.reply);
+      console.log("Mood detected:", data.mood); // ✅ Debug log
       updateExpression(data.mood);
     })
-    .catch(() => {
+    .catch((err) => {
+      console.error("Error fetching reply:", err);
       addMessage("Babble", "Sorry, I couldn’t reach my brain right now 😞");
+      updateExpression("neutral");
     });
 
   input.value = "";
@@ -35,6 +38,8 @@ function addMessage(sender, text) {
 
 function updateExpression(mood) {
   const faceImg = document.getElementById("bot-face-img");
+  if (!faceImg) return;
+
   const moods = {
     happy: "avatars/happy.png",
     sad: "avatars/sad.png",
@@ -42,11 +47,14 @@ function updateExpression(mood) {
     confused: "avatars/confused.png",
     neutral: "avatars/neutral.png",
   };
+
+  // If mood is not recognized, fall back to neutral
   faceImg.src = moods[mood] || moods.neutral;
 }
+
 document.getElementById("user-input").addEventListener("keypress", function (e) {
   if (e.key === "Enter") {
-    e.preventDefault(); // prevent newline if it's a <textarea>
-    sendMessage();      // call your existing send function
+    e.preventDefault();
+    sendMessage();
   }
 });
