@@ -46,7 +46,7 @@ function updateExpression(mood) {
   sadness: "avatars/sad.png",
   anger: "avatars/angry.png",
   fear: "avatars/confused.png",
-  surprise: "avatars/confused.png",
+  surprise: "avatars/happy.png",
   disgust: "avatars/angry.png",
   neutral: "avatars/neutral.png",
   };
