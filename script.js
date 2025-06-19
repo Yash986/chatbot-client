@@ -29,6 +29,10 @@ window.addEventListener("load", () => {
 // Show/hide typing indicator
 function showTyping(on) {
   typingIndicator.style.display = on ? "flex" : "none";
+  if (on) {
+    const chatBox = document.getElementById("chat-box");
+    chatBox.scrollTop = chatBox.scrollHeight; // ✅ Keep it at the bottom
+  }
 }
 
 // Add chat message
