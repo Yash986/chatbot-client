@@ -9,6 +9,7 @@ const moodAvatars = {
   surprise: "avatars/happy.png",
   disgust: "avatars/angry.png",
   neutral: "avatars/neutral.png",
+  concern: "avatars/sad.png",
 };
 
 function sendMessage() {
