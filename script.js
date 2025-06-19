@@ -1,7 +1,13 @@
-const serverBase = "https://chatbot-backend-production-a9a3.up.railway.app";
-const serverURL = `${serverBase}/chat`;
+// DOM refs
+const form = document.getElementById("chat-form");
+const input = document.getElementById("user-input");
+const chatBox = document.getElementById("chat-box");
+const typingIndicator = document.getElementById("typing-indicator");
+const loader = document.getElementById("loader");
+const faceImg = document.getElementById("bot-face-img"); // ⬅️ Using image now
 
-const moodAvatars = {
+// Mood → avatar image map
+const moods = {
   joy: "avatars/happy.png",
   sadness: "avatars/sad.png",
   anger: "avatars/angry.png",
@@ -9,58 +15,74 @@ const moodAvatars = {
   surprise: "avatars/happy.png",
   disgust: "avatars/angry.png",
   neutral: "avatars/neutral.png",
-  concern: "avatars/sad.png"
+  concern: "avatars/sad.png" // ✅ concern uses sad face
 };
 
-function sendMessage() {
-  const input = document.getElementById("user-input");
-  const message = input.value.trim();
-  if (!message) return;
-
-  addMessage("You", message);
-
-  fetch(serverURL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      addMessage("Babble", data.reply);
-      updateExpression(data.botMood);
-      console.log("User Mood:", data.userMood);
-      console.log("Bot Mood:", data.botMood);
-    })
-    .catch((err) => {
-      console.error("Error fetching reply:", err);
-      addMessage("Babble", "Sorry, I couldn’t reach my brain right now 😞");
-      updateExpression("neutral");
-    });
-
-  input.value = "";
-}
-
-function addMessage(sender, text) {
-  const chatBox = document.getElementById("chat-box");
-  const newMsg = document.createElement("div");
-  newMsg.innerHTML = `<strong>${sender}:</strong> ${text}`;
-  chatBox.appendChild(newMsg);
-  chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-function updateExpression(mood) {
-  const faceImg = document.getElementById("bot-face-img");
-  const imagePath = moodAvatars[mood] || moodAvatars.neutral;
-  if (faceImg) faceImg.src = imagePath;
-}
-
-document.getElementById("user-input").addEventListener("keypress", function (e) {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    sendMessage();
+// Fade out loader
+window.addEventListener("load", () => {
+  if (loader) {
+    loader.style.opacity = 0;
+    setTimeout(() => loader.remove(), 1000);
   }
 });
 
-const input = document.getElementById("user-input");
-window.addEventListener("load", () => input.focus());
-document.addEventListener("click", () => input.focus());
+// Show/hide typing indicator
+function showTyping(on) {
+  typingIndicator.style.display = on ? "flex" : "none";
+}
+
+// Add chat message
+function addMessage(who, text) {
+  const div = document.createElement("div");
+  div.classList.add("message", who);
+  div.textContent = text;
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// Update face image
+function updateExpression(mood) {
+  const imagePath = moods[mood] || moods.neutral;
+  if (faceImg) {
+    faceImg.classList.add("animate");
+    faceImg.src = imagePath;
+    setTimeout(() => faceImg.classList.remove("animate"), 300);
+  }
+}
+
+// Send and receive
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const msg = input.value.trim();
+  if (!msg) return;
+  addMessage("user", msg);
+  input.value = "";
+  showTyping(true);
+
+  fetch("https://chatbot-backend-production-a9a3.up.railway.app/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: msg })
+  })
+    .then((r) => r.json())
+    .then(({ reply, userMood, botMood }) => {
+      showTyping(false);
+      addMessage("bot", reply);
+
+      // Debugging
+      console.log("User Mood:", userMood);
+      console.log("Bot Mood:", botMood);
+
+      updateExpression(botMood);
+    })
+    .catch(() => {
+      showTyping(false);
+      addMessage("bot", "Sorry, I couldn’t reach my brain right now 😞");
+      updateExpression("neutral");
+    });
+});
+
+// Focus input on any key
+document.addEventListener("keydown", () => {
+  if (document.activeElement !== input) input.focus();
+});
