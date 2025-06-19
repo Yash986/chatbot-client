@@ -16,8 +16,12 @@ function sendMessage() {
     .then(res => res.json())
     .then(data => {
       addMessage("Babble", data.reply);
-      console.log("Mood detected:", data.mood); // ✅ Debug log
-      updateExpression(data.mood);
+
+      // ✅ Log both user and bot moods
+      console.log("User mood detected:", data.userMood);
+      console.log("Bot mood detected:", data.botMood);
+
+      updateExpression(data.botMood); // Use botMood for expression
     })
     .catch((err) => {
       console.error("Error fetching reply:", err);
@@ -42,24 +46,18 @@ function updateExpression(mood) {
   if (!faceImg) return;
 
   const moods = {
-  joy: "avatars/happy.png",
-  sadness: "avatars/sad.png",
-  anger: "avatars/angry.png",
-  fear: "avatars/confused.png",
-  surprise: "avatars/happy.png",
-  disgust: "avatars/angry.png",
-  neutral: "avatars/neutral.png",
+    joy: "avatars/happy.png",
+    sadness: "avatars/sad.png",
+    anger: "avatars/angry.png",
+    fear: "avatars/confused.png",
+    surprise: "avatars/happy.png",
+    disgust: "avatars/angry.png",
+    neutral: "avatars/neutral.png",
   };
 
-  // If mood is not recognized, fall back to neutral
   const imagePath = moods[mood] || moods.neutral;
-
-  if (faceImg) {
-    faceImg.src = imagePath;
-    console.log("Set image to:", imagePath); // ✅ debug
-  } else {
-    console.error("bot-face-img element not found!");
-  }
+  faceImg.src = imagePath;
+  console.log("Set image to:", imagePath);
 }
 
 document.getElementById("user-input").addEventListener("keypress", function (e) {
@@ -68,6 +66,7 @@ document.getElementById("user-input").addEventListener("keypress", function (e) 
     sendMessage();
   }
 });
+
 const input = document.getElementById("user-input");
 
 window.addEventListener("load", () => {
