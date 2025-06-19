@@ -1,6 +1,16 @@
 const serverBase = "https://chatbot-backend-production-a9a3.up.railway.app";
 const serverURL = `${serverBase}/chat`;
 
+const moodAvatars = {
+  joy: "avatars/happy.png",
+  sadness: "avatars/sad.png",
+  anger: "avatars/angry.png",
+  fear: "avatars/confused.png",
+  surprise: "avatars/happy.png",
+  disgust: "avatars/angry.png",
+  neutral: "avatars/neutral.png",
+};
+
 function sendMessage() {
   const input = document.getElementById("user-input");
   const message = input.value.trim();
@@ -13,15 +23,12 @@ function sendMessage() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message }),
   })
-    .then(res => res.json())
-    .then(data => {
+    .then((res) => res.json())
+    .then((data) => {
       addMessage("Babble", data.reply);
-
-      // ✅ Log both user and bot moods
-      console.log("User mood detected:", data.userMood);
-      console.log("Bot mood detected:", data.botMood);
-
-      updateExpression(data.botMood); // Use botMood for expression
+      updateExpression(data.botMood);
+      console.log("User Mood:", data.userMood);
+      console.log("Bot Mood:", data.botMood);
     })
     .catch((err) => {
       console.error("Error fetching reply:", err);
@@ -42,22 +49,8 @@ function addMessage(sender, text) {
 
 function updateExpression(mood) {
   const faceImg = document.getElementById("bot-face-img");
-  console.log("Changing face to mood:", mood);
-  if (!faceImg) return;
-
-  const moods = {
-    joy: "avatars/happy.png",
-    sadness: "avatars/sad.png",
-    anger: "avatars/angry.png",
-    fear: "avatars/confused.png",
-    surprise: "avatars/happy.png",
-    disgust: "avatars/angry.png",
-    neutral: "avatars/neutral.png",
-  };
-
-  const imagePath = moods[mood] || moods.neutral;
-  faceImg.src = imagePath;
-  console.log("Set image to:", imagePath);
+  const imagePath = moodAvatars[mood] || moodAvatars.neutral;
+  if (faceImg) faceImg.src = imagePath;
 }
 
 document.getElementById("user-input").addEventListener("keypress", function (e) {
@@ -68,11 +61,5 @@ document.getElementById("user-input").addEventListener("keypress", function (e) 
 });
 
 const input = document.getElementById("user-input");
-
-window.addEventListener("load", () => {
-  input.focus();
-});
-
-document.addEventListener("click", () => {
-  input.focus();
-});
+window.addEventListener("load", () => input.focus());
+document.addEventListener("click", () => input.focus());
