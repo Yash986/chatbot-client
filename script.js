@@ -1,4 +1,4 @@
-// DOM refs
+// DOM refs 
 const form = document.getElementById("chat-form");
 const input = document.getElementById("user-input");
 const chatBox = document.getElementById("chat-box");
@@ -18,6 +18,13 @@ const moods = {
   concern: "avatars/sad.png" // ✅ concern uses sad face
 };
 
+// 🔐 Persistent User ID using localStorage
+let userId = localStorage.getItem("babble_user_id");
+if (!userId) {
+  userId = crypto.randomUUID(); // Requires HTTPS
+  localStorage.setItem("babble_user_id", userId);
+}
+
 // Fade out loader
 window.addEventListener("load", () => {
   if (loader) {
@@ -30,7 +37,6 @@ window.addEventListener("load", () => {
 function showTyping(on) {
   typingIndicator.style.display = on ? "flex" : "none";
   if (on) {
-    const chatBox = document.getElementById("chat-box");
     chatBox.scrollTop = chatBox.scrollHeight; // ✅ Keep it at the bottom
   }
 }
@@ -66,14 +72,14 @@ form.addEventListener("submit", (e) => {
   fetch("https://chatbot-backend-production-a9a3.up.railway.app/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: msg })
+    body: JSON.stringify({ message: msg, userId }) // ✅ Include userId
   })
     .then((r) => r.json())
     .then(({ reply, userMood, botMood }) => {
       showTyping(false);
       addMessage("bot", reply);
 
-      // Debugging
+      // ✅ Debug logs
       console.log("User Mood:", userMood);
       console.log("Bot Mood:", botMood);
 
