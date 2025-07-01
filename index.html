@@ -3,8 +3,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Babble Chat</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Shantell Sans" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 </head>
 
 <body>
@@ -27,6 +29,19 @@
       <button type="submit">→</button>
     </form>
   </div>
+  <!-- 🔒 Auth Overlay -->
+<div id="auth-overlay" class="auth-overlay">
+  <div class="auth-box">
+    <h2 id="auth-title">Login</h2>
+    <input type="email" id="auth-email" placeholder="Email" />
+    <input type="password" id="auth-password" placeholder="Password" />
+    <button id="auth-action">Login</button>
+    <p id="auth-toggle-text">
+      Don't have an account? <span id="auth-toggle" class="link">Sign Up</span>
+    </p>
+  </div>
+</div>
+
   <script src="script.js"></script>
 </body>
 </html>
