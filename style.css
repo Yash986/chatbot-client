@@ -11,7 +11,7 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: "Poppins", sans-serif;
+  font-family: "Shantell Sans", sans-serif;
 }
 
 body {
@@ -225,3 +225,59 @@ body {
   filter: brightness(1.2);
 }
 
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.auth-box {
+  background: #111;
+  border: 1px solid cyan;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px cyan;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 300px;
+  text-align: center;
+}
+
+.auth-box h2 {
+  color: cyan;
+}
+
+.auth-box input {
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid cyan;
+  background: black;
+  color: white;
+}
+
+.auth-box button {
+  padding: 12px;
+  font-size: 16px;
+  background-color: cyan;
+  border: none;
+  border-radius: 6px;
+  color: black;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.auth-box button:hover {
+  background-color: #00e0e0;
+}
+
+.link {
+  color: cyan;
+  cursor: pointer;
+  text-decoration: underline;
+}
