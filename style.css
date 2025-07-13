@@ -281,3 +281,10 @@ body {
   cursor: pointer;
   text-decoration: underline;
 }
+.auth-button.loading {
+  background-color: #6c757d; /* A muted gray or desired loading color */
+  cursor: wait; /* Indicate it's processing */
+  opacity: 0.8; /* Slightly dim it */
+  /* You can add other styles like transition for a smoother effect */
+  transition: background-color 0.3s ease, opacity 0.3s ease;
+}
