@@ -22,7 +22,7 @@ const authOverlay = document.getElementById("auth-overlay");
 const authTitle = document.getElementById("auth-title");
 const authEmail = document.getElementById("auth-email");
 const authPass = document.getElementById("auth-password");
-const authAction = document.getElementById("auth-action");
+const authAction = document.getElementById("auth-action"); // The login/signup button
 const authToggleText = document.getElementById("auth-toggle-text");
 const authToggle = document.getElementById("auth-toggle");
 
@@ -43,7 +43,9 @@ let isLogin = true;
 authToggle.addEventListener("click", () => {
   isLogin = !isLogin;
   authTitle.textContent = isLogin ? "Login" : "Sign Up";
-  authAction.textContent = isLogin ? "Login" : "Sign Up";
+  authAction.textContent = isLogin ? "Login" : "Sign Up"; // Reset button text
+  authAction.disabled = false; // Ensure button is enabled when toggling
+  authAction.classList.remove('loading'); // --- NEW: Remove loading class ---
 
   authToggleText.childNodes[0].textContent = isLogin
     ? "Don't have an account? "
@@ -57,6 +59,13 @@ authAction.addEventListener("click", () => {
   const password = authPass.value;
   if (!email || !password) return alert("Please enter both fields");
 
+  // --- NEW: Show loading indicator on button ---
+  authAction.disabled = true; // Disable button to prevent multiple clicks
+  authAction.classList.add('loading'); // --- NEW: Add loading class for styling ---
+  const originalButtonText = authAction.textContent; // Store original text
+  authAction.textContent = isLogin ? "Logging in..." : "Signing up...";
+  // --- END NEW ---
+
   const authFn = isLogin
     ? auth.signInWithEmailAndPassword
     : auth.createUserWithEmailAndPassword;
@@ -67,9 +76,29 @@ authAction.addEventListener("click", () => {
       authOverlay.style.display = "none";
       window.currentUserId = cred.user.uid;
     })
-    .catch((err) => alert("❌ " + err.message));
+    .catch((err) => {
+      alert("❌ " + err.message);
+    })
+    .finally(() => {
+      authAction.disabled = false; // Re-enable button
+      authAction.textContent = originalButtonText; // Restore original text
+      authAction.classList.remove('loading'); // --- NEW: Remove loading class ---
+    });
     console.log("Clicked", isLogin ? "Login" : "Sign Up");
 });
+
+// --- Event listeners for Enter key on auth inputs ---
+function handleAuthInputEnter(event) {
+  if (event.key === 'Enter' || event.keyCode === 13) {
+    event.preventDefault(); // Prevent default form submission or new line
+    authAction.click();     // Programmatically click the login/signup button
+  }
+}
+
+authEmail.addEventListener('keydown', handleAuthInputEnter);
+authPass.addEventListener('keydown', handleAuthInputEnter);
+// --- End of Auth Input Enter Key Listeners ---
+
 
 // Loader fade
 window.addEventListener("load", () => {
@@ -105,38 +134,46 @@ function updateExpression(mood) {
 }
 
 // Submit chat
-form.addEventListener("submit", (e) => {
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
   if (!window.currentUserId) return alert("Please log in first.");
   const msg = input.value.trim();
   if (!msg) return;
+
   addMessage("user", msg);
   input.value = "";
+
   showTyping(true);
 
-  fetch("https://chatbot-backend-vddn.onrender.com/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: msg, userId: window.currentUserId })
-  })
-    .then((r) => r.json())
-    .then(({ reply, userMood, botMood }) => {
-      showTyping(false);
-      addMessage("bot", reply);
-      console.log("User Mood:", userMood);
-      console.log("Bot Mood:", botMood);
-      updateExpression(botMood);
-    })
-    .catch(() => {
-      showTyping(false);
-      addMessage("bot", "Sorry, I couldn’t reach my brain right now 😞");
-      updateExpression("neutral");
+  try {
+    // NOTE: Ensure this URL matches your deployed Render backend URL
+    const response = await fetch("https://chatbot-backend-vddn.onrender.com/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: msg, userId: window.currentUserId })
     });
+
+    const { reply, userMood, botMood } = await response.json();
+
+    showTyping(false);
+    addMessage("bot", reply);
+
+    console.log("User Mood:", userMood);
+    console.log("Bot Mood:", botMood);
+
+    updateExpression(botMood);
+
+  } catch (error) {
+    console.error("Chat fetch error:", error);
+    showTyping(false);
+    addMessage("bot", "Sorry, I couldn’t reach my brain right now 😞");
+    updateExpression("neutral");
+  }
 });
 
-// Always focus input
+// Always focus input (modified to respect auth overlay)
 document.addEventListener("keydown", () => {
-  const isAuthVisible = document.getElementById("auth-overlay")?.style.display !== "none";
+  const isAuthVisible = authOverlay.style.display !== "none"; // Check display style
   if (!isAuthVisible && document.activeElement !== input) {
     input.focus();
   }
