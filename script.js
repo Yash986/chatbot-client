@@ -114,7 +114,7 @@ form.addEventListener("submit", (e) => {
   input.value = "";
   showTyping(true);
 
-  fetch("https://chatbot-backend-production-a9a3.up.railway.app/chat", {
+  fetch("https://chatbot-backend-vddn.onrender.com/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message: msg, userId: window.currentUserId })
