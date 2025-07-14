@@ -46,7 +46,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  z-index:10;
+  z-index: 10;
 }
 .chat-header img {
   width: 48px;
@@ -69,7 +69,7 @@ body {
   flex-direction: column;
   gap: 12px;
   background: var(--bg);
-  scrollbar-width: none;        /* Firefox */
+  scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* Internet Explorer and Edge */
 }
 .chat-box::-webkit-scrollbar {
@@ -238,18 +238,20 @@ body {
 .auth-box {
   background: #111;
   border: 1px solid cyan;
-  padding: 30px 40px;
+  padding: 2rem; /* Consistent padding for all devices */
   border-radius: 12px;
   box-shadow: 0 0 20px cyan;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  width: 300px;
+  width: 90%; /* Use percentage for better responsiveness */
+  max-width: 400px; /* Reasonable max-width for larger screens */
+  min-width: 280px; /* Prevent it from being too narrow on small screens */
   text-align: center;
 }
 
 .auth-box h2 {
   color: cyan;
+  margin-bottom: 0.5rem; /* Add some space below the title */
 }
 
 .auth-box input {
@@ -259,6 +261,7 @@ body {
   border: 1px solid cyan;
   background: black;
   color: white;
+  margin-bottom: 0.5rem; /* Space between inputs */
 }
 
 .auth-box button {
@@ -270,6 +273,7 @@ body {
   color: black;
   cursor: pointer;
   transition: background 0.3s ease;
+  margin-top: 0.5rem; /* Space above button */
 }
 
 .auth-box button:hover {
@@ -285,6 +289,70 @@ body {
   background-color: #6c757d; /* A muted gray or desired loading color */
   cursor: wait; /* Indicate it's processing */
   opacity: 0.8; /* Slightly dim it */
-  /* You can add other styles like transition for a smoother effect */
   transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+
+.auth-error-text {
+  color: #dc3545; /* Red color for errors */
+  font-size: 0.9em;
+  margin-top: 0.5rem; /* Adjusted for consistency */
+  margin-bottom: 0.5rem; /* Space below the message */
+  text-align: center;
+  min-height: 1.2em; /* Reserve space to prevent layout shifts */
+  visibility: hidden; /* Start hidden, show with JS */
+  opacity: 0; /* For fade-in/out effect */
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.auth-error-text.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* --- Alert Message Styles --- */
+.alert-message {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--card-bg);
+  color: var(--text);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 15px 25px;
+  box-shadow: 0 4px 15px rgba(0, 255, 255, 0.4);
+  z-index: 10000;
+  font-size: 1rem;
+  text-align: center;
+  max-width: 90%;
+  min-width: 250px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease, top 0.3s ease;
+}
+
+.auth-box p {
+  margin-top: 0.5rem; /* Add spacing for the toggle text */
+}
+
+.alert-message.show {
+  opacity: 1;
+  visibility: visible;
+  top: 30px;
+}
+
+/* Responsive adjustments for auth-box */
+@media (max-width: 480px) {
+  .auth-box {
+    padding: 1.5rem; /* Slightly less padding on small screens */
+    min-width: 240px; /* Slightly smaller min-width for very small screens */
+  }
+  .auth-box input,
+  .auth-box button {
+    font-size: 14px; /* Slightly smaller font for small screens */
+    padding: 10px; /* Adjust padding for better fit */
+  }
+  .auth-box h2 {
+    font-size: 1.25rem; /* Smaller heading on small screens */
+  }
 }
