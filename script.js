@@ -25,6 +25,7 @@ const authPass = document.getElementById("auth-password");
 const authAction = document.getElementById("auth-action"); // The login/signup button
 const authToggleText = document.getElementById("auth-toggle-text");
 const authToggle = document.getElementById("auth-toggle");
+const authErrorMessage = document.getElementById("auth-error-message"); // Reference to the error message div
 
 const moods = {
   joy: "avatars/happy.png",
@@ -39,15 +40,27 @@ const moods = {
 
 let isLogin = true;
 
-// Toggle login/signup (safe version using textContent)
+// Function to display/hide auth errors in the dedicated div
+function displayAuthError(message = "") {
+  if (authErrorMessage) {
+    authErrorMessage.textContent = message;
+    if (message) {
+      authErrorMessage.classList.add('show'); // Add 'show' class for visibility and opacity
+    } else {
+      authErrorMessage.classList.remove('show'); // Remove 'show' class to hide
+    }
+  }
+}
+
+// Toggle login/signup
 authToggle.addEventListener("click", () => {
   isLogin = !isLogin;
   authTitle.textContent = isLogin ? "Login" : "Sign Up";
   authAction.textContent = isLogin ? "Login" : "Sign Up"; // Reset button text
   authAction.disabled = false; // Ensure button is enabled when toggling
-  authAction.classList.remove('loading'); // --- NEW: Remove loading class ---
-
-  authToggleText.childNodes[0].textContent = isLogin
+  authAction.classList.remove('loading'); // Remove loading class
+  displayAuthError(""); // Clear any previous error message on toggle
+    authToggleText.childNodes[0].textContent = isLogin
     ? "Don't have an account? "
     : "Already have an account? ";
   authToggle.textContent = isLogin ? "Sign Up" : "Login";
@@ -57,14 +70,19 @@ authToggle.addEventListener("click", () => {
 authAction.addEventListener("click", () => {
   const email = authEmail.value;
   const password = authPass.value;
-  if (!email || !password) return alert("Please enter both fields");
 
-  // --- NEW: Show loading indicator on button ---
+  displayAuthError(""); // Clear any previous error message on a new attempt
+
+  if (!email || !password) {
+    displayAuthError("Please enter both fields.");
+    return; // Stop execution if fields are empty
+  }
+
+  // Show loading indicator on button
   authAction.disabled = true; // Disable button to prevent multiple clicks
-  authAction.classList.add('loading'); // --- NEW: Add loading class for styling ---
+  authAction.classList.add('loading'); // Add loading class for styling
   const originalButtonText = authAction.textContent; // Store original text
   authAction.textContent = isLogin ? "Logging in..." : "Signing up...";
-  // --- END NEW ---
 
   const authFn = isLogin
     ? auth.signInWithEmailAndPassword
@@ -73,21 +91,51 @@ authAction.addEventListener("click", () => {
   authFn.call(auth, email, password)
     .then((cred) => {
       console.log("✅ Auth Success:", cred.user.uid);
-      authOverlay.style.display = "none";
+      authOverlay.style.display = "none"; // Hide overlay on success
       window.currentUserId = cred.user.uid;
+      displayAuthError(""); // Clear error on success
     })
     .catch((err) => {
-      alert("❌ " + err.message);
+      console.error("Auth Error:", err); // Log the full error for debugging
+      let errorMessage = "An unknown authentication error occurred.";
+      // Firebase error codes usually follow 'auth/error-code' format
+      if (err.code) {
+        switch (err.code) {
+          case 'auth/wrong-password':
+            errorMessage = "Incorrect password. Please try again.";
+            break;
+          case 'auth/user-not-found':
+            errorMessage = "No account found with that email.";
+            break;
+          case 'auth/email-already-in-use':
+            errorMessage = "This email is already in use. Please login or use a different email.";
+            break;
+          case 'auth/invalid-email':
+            errorMessage = "Please enter a valid email address.";
+            break;
+          case 'auth/weak-password':
+            errorMessage = "Password should be at least 6 characters long.";
+            break;
+          case 'auth/network-request-failed':
+            errorMessage = "Network error. Please check your internet connection.";
+            break;
+          default:
+            errorMessage = err.message; // Fallback to Firebase's raw message
+        }
+      } else if (err.message) {
+        errorMessage = err.message; // Fallback to generic message if no code
+      }
+      displayAuthError(errorMessage); // *** THIS IS THE KEY CHANGE ***
     })
-    .finally(() => {
+    .finally(() => { // This block runs regardless of success or failure
       authAction.disabled = false; // Re-enable button
       authAction.textContent = originalButtonText; // Restore original text
-      authAction.classList.remove('loading'); // --- NEW: Remove loading class ---
+      authAction.classList.remove('loading'); // Remove loading class
     });
     console.log("Clicked", isLogin ? "Login" : "Sign Up");
 });
 
-// --- Event listeners for Enter key on auth inputs ---
+// Event listeners for Enter key on auth inputs
 function handleAuthInputEnter(event) {
   if (event.key === 'Enter' || event.keyCode === 13) {
     event.preventDefault(); // Prevent default form submission or new line
@@ -97,8 +145,6 @@ function handleAuthInputEnter(event) {
 
 authEmail.addEventListener('keydown', handleAuthInputEnter);
 authPass.addEventListener('keydown', handleAuthInputEnter);
-// --- End of Auth Input Enter Key Listeners ---
-
 
 // Loader fade
 window.addEventListener("load", () => {
