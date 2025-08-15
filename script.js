@@ -164,6 +164,7 @@ function showTyping(on) {
 function addMessage(who, text) {
   const div = document.createElement("div");
   div.classList.add("message", who);
+  const cleanText = text.replace(/\s*\[\w+\]\s*$/, '');
   div.textContent = text;
   chatBox.appendChild(div);
   chatBox.scrollTop = chatBox.scrollHeight;
