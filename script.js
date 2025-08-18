@@ -164,8 +164,9 @@ function showTyping(on) {
 function addMessage(who, text) {
   const div = document.createElement("div");
   div.classList.add("message", who);
-  const cleanText = text.replace(/\s*\[\w+\]\s*$/, '');
-  div.textContent = text;
+  // Remove the tag and any trailing whitespace more reliably
+  const cleanText = text.replace(/\[([a-z]+)\]\s*$/i, '').trim();
+  div.textContent = cleanText;
   chatBox.appendChild(div);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
