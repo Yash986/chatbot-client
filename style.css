@@ -1,10 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap');
 :root {
-  --bg: #000;
-  --card-bg: #111;
+  --bg: #1b1b1b;
+  --card-bg: #000000;
   --accent: #0ff;
   --text: #fff;
-  --bot-msg: #222;
+  --bot-msg: #425352;
   --user-msg: rgba(0, 255, 255, 0.2);
 }
 
@@ -17,47 +17,23 @@
 
 body {
   background: var(--bg);
-  color: var(--text);
+  color: #f8f3f3;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
   min-height: 100vh;
 }
 
 .chat-card {
-  background: var(--card-bg);
-  border: 2px solid var(--accent);
-  border-radius: 12px;
+  background: var(--bg);
+  border: 2psolid var(--accent);
   width: 100%;
-  max-width: 600px;
+  max-width: 100vw;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 255, 255, 0.2);
-  height: 90vh;
-}
-
-/* Header */
-.chat-header {
-  flex-shrink: 0;
-  background: var(--accent);
-  color: #000;
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  z-index: 10;
-}
-.chat-header img {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: #fff;
-}
-.chat-header h1 {
-  font-size: 1.5rem;
-  font-weight: 600;
+  height: 100vh;
 }
 
 /* Chat area */
@@ -91,7 +67,7 @@ body {
 }
 .message.user {
   background: var(--user-msg);
-  border: 1px solid var(--accent);
+  /* border: 1px solid var(--accent); */
   align-self: flex-end;
 }
 
@@ -103,6 +79,7 @@ body {
   display: none;
   align-self: flex-start;
   gap: 4px;
+  background: var(--bg);
 }
 .dot {
   opacity: 0;
@@ -121,7 +98,8 @@ body {
 /* Input form */
 .chat-form {
   display: flex;
-  border-top: 1px solid var(--accent);
+  background: var(--bg);
+  border-top: 2px solid var(--accent);
 }
 .chat-form input {
   flex: 1;
@@ -138,6 +116,7 @@ body {
   padding: 0 20px;
   cursor: pointer;
   font-size: 1.2rem;
+  transition: background-color 0.3s ease-out;
 }
 
 /* Animations */
@@ -237,11 +216,11 @@ body {
 }
 
 .auth-box {
-  background: #111;
+  background: var(--bg);
   border: 1px solid cyan;
   padding: 2rem; /* Consistent padding for all devices */
   border-radius: 12px;
-  box-shadow: 0 0 20px cyan;
+  /* box-shadow: 0 0 20px cyan; */
   display: flex;
   flex-direction: column;
   width: 90%; /* Use percentage for better responsiveness */
@@ -256,13 +235,14 @@ body {
 }
 
 .auth-box input {
+  border: none;
   padding: 12px;
   font-size: 16px;
-  border-radius: 6px;
-  border: 1px solid cyan;
-  background: black;
+  border-bottom: 2px solid var(--accent);
+  background: #333333;
   color: white;
   margin-bottom: 0.5rem; /* Space between inputs */
+  /* border-radius: 6px; */
 }
 
 .auth-box button {
@@ -356,4 +336,135 @@ body {
   .auth-box h2 {
     font-size: 1.25rem; /* Smaller heading on small screens */
   }
+}
+.chat-form button:hover {
+  background:#03a3a3;
+}
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #333333 inset !important;
+    /* Set the text color if needed, as browser autofill can change that too */
+    -webkit-text-fill-color: #fff !important;
+    transition: background-color 5000s ease-in-out 0s; /* Optional: prevents a brief flash of the default color */
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+  outline: none;
+  border-bottom: 2px solid var(--accent);
+}
+
+.chat-header img {
+    width: 10vw;
+    height: 10vw; 
+    align-self: center;
+}
+
+/* Header */
+.chat-header {
+  box-shadow: 0px 0px 0px 2px var(--accent);
+  flex-shrink: 0;
+  background: var(--bg);
+  padding: 12px 16px;
+  display: flex;
+  gap: 12px;
+  z-index: 10;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  height: auto;
+}
+
+.chat-header img {
+  order: 1;
+  flex-shrink: 0;
+  width: 10vw;
+  height: 10vw;
+  object-fit: contain;
+}
+
+.chat-header .eyes-container {
+  position: absolute;
+  left: 0%;
+  display: flex;
+  gap: 4vmin;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 2vmin 0;
+  --eye-size: 12vmin;
+  overflow: visible;
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
+}
+
+.eye {
+  position: relative;
+  width: var(--eye-size);
+  height: var(--eye-size);
+  background: var(--accent);
+  border-radius: 50%;
+  overflow: visible; /* allow lids to move outside */
+  flex-shrink: 0;
+  box-shadow: 0 0 0 0.3vmin var(--bg);
+}
+
+/* Upper + Lower wrappers for eyelids */
+.eye .upper,
+.eye .lower {
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  left: 0;
+  overflow: hidden;
+  --position: 0%; /* controlled by JS */
+}
+
+/* Upper half */
+.eye .upper {
+  top: 0;
+}
+
+/* Lower half */
+.eye .lower {
+  bottom: 0;
+}
+
+/* Lid inside each half */
+.eye .upper .lid,
+.eye .lower .lid {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  border-radius: 50%;
+  transition: transform 0.25s ease;
+}
+
+/* Upper lid moves down */
+.eye .upper .lid {
+  top: -50%;
+  transform: translateY(var(--position)) rotate(var(--rotation));
+  transform-origin: bottom center;
+}
+
+/* Lower lid moves up */
+.eye .lower .lid {
+  bottom: -50%;
+  transform: translateY(calc(-1 * var(--position))) rotate(var(--rotation));
+  transform-origin: top center;
+}
+
+.eye .pupil {
+  position: absolute;
+  width: 35%;
+  height: 35%;
+  background: black;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 0.25s ease;
 }
