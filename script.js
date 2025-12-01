@@ -171,6 +171,127 @@ function addMessage(who, text) {
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
+// Emotion states for the CodePen face
+const states = {
+  neutral: {
+    face: { rotationX: 0, rotationY: 0, rotationZ: 0 },
+    left: { lower: { rotation: 0, position: -100 }, upper: { rotation: 0, position: -100 } },
+    right: { lower: { rotation: 0, position: -100 }, upper: { rotation: 0, position: -100 } }
+  },
+  happy: {
+    face: { rotationX: 0, rotationY: 0, rotationZ: 0 },
+    left: { lower: { rotation: 20, position: 40 }, upper: { rotation: 0, position: -100 } },
+    right: { lower: { rotation: -20, position: 40 }, upper: { rotation: 0, position: -100 } }
+  },
+  joy: {
+    face: { rotationX: 0, rotationY: 0, rotationZ: 0 },
+    left: { lower: { rotation: 20, position: 40 }, upper: { rotation: 0, position: -100 } },
+    right: { lower: { rotation: -20, position: 40 }, upper: { rotation: 0, position: -100 } } 
+  },
+  sad: {
+    face: { rotationX: 0, rotationY: 0, rotationZ: 0 },
+    left: { lower: { rotation: 0, position: 0 }, upper: { rotation: -20, position: 40 } },
+    right: { lower: { rotation: 0, position: 0 }, upper: { rotation: 20, position: 40 } }
+  },
+  sadness: {
+    face: { rotationX: 0, rotationY: 0, rotationZ: 0 },
+    left: { lower: { rotation: 0, position: 0 }, upper: { rotation: -20, position: 40 } },
+    right: { lower: { rotation: 0, position: 0 }, upper: { rotation: 20, position: 40 } }
+  },
+  close: {
+    face: { rotationX: -20, rotationY: 0, rotationZ: 0 },
+    left: { lower: { rotation: 0, position: 45 }, upper: { rotation: 0, position: 45 } },
+    right: { lower: { rotation: 0, position: 45 }, upper: { rotation: 0, position: 45 } }
+  },
+  angry: {
+    face: { rotationX: -10, rotationY: 0, rotationZ: 0 },
+    left: { lower: { rotation: 0, position: 0 }, upper: { rotation: 20, position: 40 } },
+    right: { lower: { rotation: 0, position: 0 }, upper: { rotation: -20, position: 40 } }
+  },
+  anger: {
+    face: { rotationX: -10, rotationY: 0, rotationZ: 0 },
+    left: { lower: { rotation: 0, position: 0 }, upper: { rotation: 20, position: 40 } },
+    right: { lower: { rotation: 0, position: 0 }, upper: { rotation: -20, position: 40 } }
+  },
+  confused: {
+    face: { rotationX: 0, rotationY: 0, rotationZ: 0 },
+    left: { lower: { rotation: 0, position: 0 }, upper: { rotation: 0, position: 40 } },
+    right: { lower: { rotation: 0, position: 0 }, upper: { rotation: 0, position: 0 } }
+  },
+  fear: {
+    face: { rotationX: 0, rotationY: 0, rotationZ: 0 },
+    left: { lower: { rotation: 0, position: 0 }, upper: { rotation: 0, position: 40 } },
+    right: { lower: { rotation: 0, position: 0 }, upper: { rotation: 0, position: 0 } }
+  },
+  surprise: {
+    face: { rotationX: 0, rotationY: 0, rotationZ: 0 },
+    left: { lower: { rotation: 20, position: 40 }, upper: { rotation: 0, position: -100 } },
+    right: { lower: { rotation: -20, position: 40 }, upper: { rotation: 0, position: -100 } }
+  },
+  suspicious: {
+    face: { rotationX: 0, rotationY: 0, rotationZ: 0 },
+    left: { lower: { rotation: -4, position: 20 }, upper: { rotation: 4, position: 20 } },
+    right: { lower: { rotation: 4, position: 20 }, upper: { rotation: -4, position: 20 } }
+  },
+  pain: {
+    face: { rotationX: 0, rotationY: 0, rotationZ: 0 },
+    left: { lower: { rotation: 10, position: 20 }, upper: { rotation: -10, position: 20 } },
+    right: { lower: { rotation: -10, position: 20 }, upper: { rotation: 10, position: 20 } }
+  },
+  concern: {
+    face: { rotationX: 0, rotationY: 0, rotationZ: 0 },
+    left: { lower: { rotation: 0, position: 0 }, upper: { rotation: -20, position: 40 } },
+    right: { lower: { rotation: 0, position: 0 }, upper: { rotation: 20, position: 40 } }
+  },
+  disgust: {
+    face: { rotationX: -10, rotationY: 0, rotationZ: 0 },
+    left: { lower: { rotation: 0, position: 0 }, upper: { rotation: 20, position: 40 } },
+    right: { lower: { rotation: 0, position: 0 }, upper: { rotation: -20, position: 40 } }
+  },
+  unamused: {
+    face: { rotationX: 0, rotationY: 0, rotationZ: 0 },
+    left: { lower: { rotation: 0, position: 0 }, upper: { rotation: 0, position: 40 } },
+    right: { lower: { rotation: 0, position: 0 }, upper: { rotation: 0, position: 40 } }
+  },
+  unsure: {
+    face: { rotationX: 0, rotationY: 0, rotationZ: 7 },
+    left: { lower: { rotation: 10, position: 20 }, upper: { rotation: -10, position: 20 } },
+    right: { lower: { rotation: 0, position: 0 }, upper: { rotation: 0, position: 0 } }
+  }
+};
+
+// Set the face emotion state by applying CSS variables to eye elements
+const setState = (state) => {
+  if (!states[state]) state = "neutral";
+  const s = states[state];
+
+  const leftEye = document.querySelector(".eye.left");
+  const rightEye = document.querySelector(".eye.right");
+  const container = document.querySelector(".eyes-container");
+
+  ["left","right"].forEach(side => {
+    const eye = side === "left" ? leftEye : rightEye;
+    const lids = s[side];
+
+    eye.querySelector(".upper .lid").style.transform = `translateY(${lids.upper.position}%) rotate(${lids.upper.rotation}deg)`;
+    eye.querySelector(".lower .lid").style.transform = `translateY(${-lids.lower.position}%) rotate(${lids.lower.rotation}deg)`;
+  });
+
+  // Apply face rotation
+  if(container) {
+    container.style.transform = `rotateX(${s.face.rotationX}deg) rotateY(${s.face.rotationY}deg) rotateZ(${s.face.rotationZ}deg)`;
+  }
+};
+
+
+// Initialize to neutral on load
+window.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    setState("neutral");
+    console.log("Eyes initialized to neutral");
+  }, 100);
+});
+
 // Change bot face
 function updateExpression(mood) {
   const imagePath = moods[mood] || moods.neutral;
@@ -179,6 +300,9 @@ function updateExpression(mood) {
     faceImg.src = imagePath;
     setTimeout(() => faceImg.classList.remove("animate"), 300);
   }
+  // Update the header eyes with botMood
+  window.botMood = mood;
+  setState(mood);
 }
 
 // Submit chat
